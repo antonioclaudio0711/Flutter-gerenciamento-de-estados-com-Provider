@@ -15,12 +15,13 @@ class HamburgerMenu extends StatelessWidget {
               color: Colors.indigo,
             ),
             child: Text(
-            'Menu',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 20
-            )),
+              'Menu',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
           ),
           ListTile(
             title: const Text('Gerenciar clientes'),

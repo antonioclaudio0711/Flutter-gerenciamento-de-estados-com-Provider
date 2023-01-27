@@ -13,19 +13,29 @@ class ClientTypesPage extends StatefulWidget {
 }
 
 class _ClientTypesPageState extends State<ClientTypesPage> {
-
   List<ClientType> types = [
-    ClientType(name: 'Platinum', icon: Icons.credit_card),
-    ClientType(name: 'Golden', icon: Icons.card_membership),
-    ClientType(name: 'Titanium', icon: Icons.credit_score),
-    ClientType(name: 'Diamond', icon: Icons.diamond),
+    ClientType(
+      name: 'Platinum',
+      icon: Icons.credit_card,
+    ),
+    ClientType(
+      name: 'Golden',
+      icon: Icons.card_membership,
+    ),
+    ClientType(
+      name: 'Titanium',
+      icon: Icons.credit_score,
+    ),
+    ClientType(
+      name: 'Diamond',
+      icon: Icons.diamond,
+    ),
   ];
 
   IconData? selectedIcon;
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -43,16 +53,20 @@ class _ClientTypesPageState extends State<ClientTypesPage> {
               iconColor: Colors.deepOrange,
             ),
             onDismissed: (direction) {
-              setState(() {
-                types.removeAt(index);
-              });
+              setState(
+                () {
+                  types.removeAt(index);
+                },
+              );
             },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepOrange,
-        onPressed: (){createType(context);},
+        onPressed: () {
+          createType(context);
+        },
         tooltip: 'Add Tipo',
         child: const Icon(Icons.add),
       ),
@@ -73,7 +87,7 @@ class _ClientTypesPageState extends State<ClientTypesPage> {
             child: Form(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+                children: [
                   TextFormField(
                     controller: nomeInput,
                     decoration: const InputDecoration(
@@ -82,25 +96,36 @@ class _ClientTypesPageState extends State<ClientTypesPage> {
                     ),
                   ),
                   const Padding(padding: EdgeInsets.all(5)),
-                  StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-                    return Column(children: [
-                      const Padding(padding: EdgeInsets.all(5)),
-                      selectedIcon != null ? Icon(selectedIcon, color: Colors.deepOrange) : const Text('Selecione um ícone'),
-                      const Padding(padding: EdgeInsets.all(5)),
-                      SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                            onPressed: () async {
-                              final IconData? result = await showIconPicker(context: context, defalutIcon: selectedIcon);
-                              setState(() {
-                                selectedIcon = result;
-                              });
-                            },
-                            child: const Text('Selecionar icone')
-                        ),
-                      ),
-                    ]);
-                  }),
+                  StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      return Column(
+                        children: [
+                          const Padding(padding: EdgeInsets.all(5)),
+                          selectedIcon != null
+                              ? Icon(selectedIcon, color: Colors.deepOrange)
+                              : const Text('Selecione um ícone'),
+                          const Padding(padding: EdgeInsets.all(5)),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                final IconData? result = await showIconPicker(
+                                  context: context,
+                                  defalutIcon: selectedIcon,
+                                );
+                                setState(
+                                  () {
+                                    selectedIcon = result;
+                                  },
+                                );
+                              },
+                              child: const Text('Selecionar icone'),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -109,23 +134,23 @@ class _ClientTypesPageState extends State<ClientTypesPage> {
             TextButton(
               child: const Text("Salvar"),
               onPressed: () {
-                selectedIcon ??= Icons.credit_score;
+                selectedIcon ?? Icons.credit_score;
                 types.add(ClientType(name: nomeInput.text, icon: selectedIcon));
                 selectedIcon = null;
                 setState(() {});
                 Navigator.pop(context);
-              }
+              },
             ),
             TextButton(
-              child: const Text("Calcelar"),
+              child: const Text("Cancelar"),
               onPressed: () async {
                 selectedIcon = null;
                 Navigator.pop(context);
-              }
+              },
             )
           ],
         );
-      }
+      },
     );
   }
 }
