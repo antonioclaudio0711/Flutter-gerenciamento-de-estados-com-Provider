@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 Future<IconData?> showIconPicker(
-    {required BuildContext context, IconData? defalutIcon}) async {
+    {required BuildContext context, IconData? defaultIcon}) async {
   final List<IconData> allIcons = [
     Icons.card_giftcard,
     Icons.card_membership,
@@ -33,7 +33,7 @@ Future<IconData?> showIconPicker(
   // selected icon
   // the selected icon is highlighed
   // so it looks different from the others
-  IconData? selectedIcon = defalutIcon;
+  IconData? selectedIcon = defaultIcon;
 
   await showDialog(
     context: context,

@@ -1,8 +1,11 @@
 import 'package:client_control/models/client_type.dart';
-import 'package:client_control/models/client.dart';
+import 'package:client_control/models/provider/types.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../components/hamburger_menu.dart';
+import '../models/client.dart';
+import '../models/provider/clients.dart';
 
 class ClientsPage extends StatefulWidget {
   const ClientsPage({Key? key, required this.title}) : super(key: key);
@@ -13,60 +16,6 @@ class ClientsPage extends StatefulWidget {
 }
 
 class _ClientsPageState extends State<ClientsPage> {
-  List<Client> clients = [
-    Client(
-      name: 'Geraldo',
-      email: 'leo@email.com',
-      type: ClientType(
-        name: 'Platinum',
-        icon: Icons.credit_card,
-      ),
-    ),
-    Client(
-      name: 'Paulo',
-      email: 'leo@email.com',
-      type: ClientType(
-        name: 'Golden',
-        icon: Icons.card_membership,
-      ),
-    ),
-    Client(
-      name: 'Caio',
-      email: 'leo@email.com',
-      type: ClientType(
-        name: 'Titanium',
-        icon: Icons.credit_score,
-      ),
-    ),
-    Client(
-      name: 'Ruan',
-      email: 'ruan@email.com',
-      type: ClientType(
-        name: 'Diamond',
-        icon: Icons.diamond,
-      ),
-    ),
-  ];
-
-  List<ClientType> types = [
-    ClientType(
-      name: 'Platinum',
-      icon: Icons.credit_card,
-    ),
-    ClientType(
-      name: 'Golden',
-      icon: Icons.card_membership,
-    ),
-    ClientType(
-      name: 'Titanium',
-      icon: Icons.credit_score,
-    ),
-    ClientType(
-      name: 'Diamond',
-      icon: Icons.diamond,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,22 +23,31 @@ class _ClientsPageState extends State<ClientsPage> {
         title: Text(widget.title),
       ),
       drawer: const HamburgerMenu(),
-      body: ListView.builder(
-        itemCount: clients.length,
-        itemBuilder: (context, index) {
-          return Dismissible(
-            key: UniqueKey(),
-            background: Container(color: Colors.red),
-            child: ListTile(
-              leading: Icon(clients[index].type.icon),
-              title: Text(
-                  clients[index].name + ' (' + clients[index].type.name + ')'),
-              iconColor: Colors.indigo,
-            ),
-            onDismissed: (direction) {
-              setState(
-                () {
-                  clients.removeAt(index);
+      body: Consumer<Clients>(
+        builder: (BuildContext context, Clients list, Widget? widget) {
+          return ListView.builder(
+            itemCount: list.listClients.length,
+            itemBuilder: (context, index) {
+              return Consumer(
+                builder: (BuildContext context, Clients listClients,
+                    Widget? widget) {
+                  return Dismissible(
+                    key: UniqueKey(),
+                    background: Container(color: Colors.red),
+                    child: ListTile(
+                      leading: Icon(list.listClients[index].type.icon),
+                      title: Text(
+                        list.listClients[index].name +
+                            ' (' +
+                            list.listClients[index].type.name +
+                            ')',
+                      ),
+                      iconColor: Colors.indigo,
+                    ),
+                    onDismissed: (direction) {
+                      list.remove(index);
+                    },
+                  );
                 },
               );
             },
@@ -108,9 +66,10 @@ class _ClientsPageState extends State<ClientsPage> {
   }
 
   void createType(context) {
-    TextEditingController nomeInput = TextEditingController();
+    TextEditingController nameInput = TextEditingController();
     TextEditingController emailInput = TextEditingController();
-    ClientType dropdownValue = types[0];
+    Types listTypes = Provider.of<Types>(context, listen: false);
+    ClientType dropdownValue = listTypes.clientTypeList[0];
 
     showDialog(
       context: context,
@@ -125,7 +84,7 @@ class _ClientsPageState extends State<ClientsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextFormField(
-                    controller: nomeInput,
+                    controller: nameInput,
                     decoration: const InputDecoration(
                       labelText: 'Nome',
                       icon: Icon(Icons.account_box),
@@ -158,7 +117,7 @@ class _ClientsPageState extends State<ClientsPage> {
                             },
                           );
                         },
-                        items: types.map(
+                        items: listTypes.clientTypeList.map(
                           (ClientType type) {
                             return DropdownMenuItem<ClientType>(
                               value: type,
@@ -174,20 +133,23 @@ class _ClientsPageState extends State<ClientsPage> {
             ),
           ),
           actions: [
-            TextButton(
-              child: const Text("Salvar"),
-              onPressed: () async {
-                setState(
-                  () {
-                    clients.add(
+            Consumer<Clients>(
+              builder:
+                  (BuildContext context, Clients listClients, Widget? widget) {
+                return TextButton(
+                  child: const Text("Salvar"),
+                  onPressed: () async {
+                    listClients.add(
                       Client(
-                          name: nomeInput.text,
-                          email: emailInput.text,
-                          type: dropdownValue),
+                        name: nameInput.text,
+                        email: emailInput.text,
+                        type: dropdownValue,
+                      ),
                     );
+
+                    Navigator.pop(context);
                   },
                 );
-                Navigator.pop(context);
               },
             ),
             TextButton(
